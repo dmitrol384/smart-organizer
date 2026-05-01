@@ -1,22 +1,32 @@
-import { useState } from 'react';
-import { View, Text, TextInput, Button, FlatList } from 'react-native';
+import { useState } from "react";
+import {
+  Button,
+  FlatList,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function ShoppingScreen() {
-  const [item, setItem] = useState('');
+  const [item, setItem] = useState("");
   const [list, setList] = useState<string[]>([]);
 
   const addItem = () => {
     if (!item.trim()) return;
 
     setList([...list, item]);
-    setItem('');
+    setItem("");
+  };
+
+  const removeItem = (index: number) => {
+    const newList = list.filter((_, i) => i !== index);
+    setList(newList);
   };
 
   return (
     <View style={{ padding: 20 }}>
-      <Text style={{ fontSize: 24, marginBottom: 10 }}>
-        Lista zakupów
-      </Text>
+      <Text style={{ fontSize: 24, marginBottom: 10 }}>Lista zakupów</Text>
 
       <TextInput
         placeholder="Dodaj produkt"
@@ -34,10 +44,10 @@ export default function ShoppingScreen() {
       <FlatList
         data={list}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <Text style={{ padding: 10, fontSize: 18 }}>
-            • {item}
-          </Text>
+        renderItem={({ item, index }) => (
+          <TouchableOpacity onPress={() => removeItem(index)}>
+            <Text style={{ padding: 10, fontSize: 18 }}>{item}</Text>
+          </TouchableOpacity>
         )}
       />
     </View>
