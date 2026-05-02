@@ -1,3 +1,4 @@
+import { AntDesign } from "@expo/vector-icons";
 import { useState } from "react";
 import {
   Button,
@@ -10,21 +11,23 @@ import {
 
 export default function ShoppingScreen() {
   const [item, setItem] = useState("");
-  // Każdy element ma nazwę i status (zrobione/niezrobione)
   const [list, setList] = useState<{ name: string; done: boolean }[]>([]);
 
   const addItem = () => {
     if (!item.trim()) return;
-    // Dodajemy obiekt zamiast samego stringa
+
     setList([...list, { name: item, done: false }]);
     setItem("");
   };
 
-  //Zmienia status elementu (kupione/niekupione)
   const toggleItem = (index: number) => {
     const newList = [...list];
-    // Przełączamy status "done" dla danego elementu
     newList[index].done = !newList[index].done;
+    setList(newList);
+  };
+
+  const removeItem = (index: number) => {
+    const newList = list.filter((_, i) => i !== index);
     setList(newList);
   };
 
@@ -47,20 +50,32 @@ export default function ShoppingScreen() {
 
       <FlatList
         data={list}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(_, index) => index.toString()}
         renderItem={({ item, index }) => (
-          <TouchableOpacity onPress={() => toggleItem(index)}>
-            <Text
-              style={{
-                padding: 10,
-                fontSize: 18,
-                textDecorationLine: item.done ? "line-through" : "none",
-                color: item.done ? "gray" : "black",
-              }}
-            >
-              {item.name}
-            </Text>
-          </TouchableOpacity>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              padding: 10,
+            }}
+          >
+            <TouchableOpacity onPress={() => toggleItem(index)}>
+              <Text
+                style={{
+                  fontSize: 18,
+                  textDecorationLine: item.done ? "line-through" : "none",
+                  color: item.done ? "gray" : "black",
+                }}
+              >
+                {item.name}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => removeItem(index)}>
+              <AntDesign name="close-circle" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
         )}
       />
     </View>
