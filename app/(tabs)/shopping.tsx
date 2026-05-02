@@ -1,5 +1,6 @@
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
-import { useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect, useState } from "react";
 import {
   Button,
   FlatList,
@@ -19,6 +20,43 @@ export default function ShoppingScreen() {
     setList([...list, { name: item, done: false }]);
     setItem("");
   };
+
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  //Zapisujemy listę za każdym razem, gdy coś się zmienia
+  // AsyncStorage działa jak lokalna baza danych na urządzeniu
+  // Zapisujemy dane, żeby użytkownik nie stracił listy po zamknięciu aplikacji
+  useEffect(() => {
+    if (!isLoaded) return;
+    const saveData = async () => {
+      try {
+        await AsyncStorage.setItem("shoppingList", JSON.stringify(list));
+        console.log("ZAPIS:", list);
+      } catch (e) {
+        console.log("Błąd zapisu", e);
+      }
+    };
+
+    saveData();
+  }, [list, isLoaded]);
+
+  // Wczytujemy dane przy starcie aplikacji
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const data = await AsyncStorage.getItem("shoppingList");
+        console.log("ODCZYT:", data);
+        if (data !== null) {
+          setList(JSON.parse(data));
+        }
+        setIsLoaded(true);
+      } catch (e) {
+        console.log("Błąd odczytu", e);
+      }
+    };
+
+    loadData();
+  }, []);
 
   // Zmieniamy po obiekcie, nie po indeksie
   const toggleItem = (itemToToggle: { name: string; done: boolean }) => {
