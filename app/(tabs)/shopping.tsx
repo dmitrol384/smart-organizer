@@ -1,4 +1,4 @@
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import { useState } from "react";
 import {
   Button,
@@ -33,7 +33,19 @@ export default function ShoppingScreen() {
 
   return (
     <View style={{ padding: 20 }}>
-      <Text style={{ fontSize: 24, marginBottom: 10 }}>Lista zakupów</Text>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 10,
+        }}
+      >
+        <Text style={{ fontSize: 24 }}>Lista zakupów</Text>
+
+        {/* Ikona sortowania - na razie bez logiki */}
+        <FontAwesome name="sort" size={24} color="black" />
+      </View>
 
       <TextInput
         placeholder="Dodaj produkt"
