@@ -1,11 +1,10 @@
-import { Tabs } from 'expo-router';
+import { Tabs } from "expo-router";
 
 export default function TabsLayout() {
   return (
+    // Używamy Tabs do stworzenia głównej nawigacji aplikacji
     <Tabs>
-      <Tabs.Screen name="shopping" options={{ title: 'Zakupy' }} />
-      <Tabs.Screen name="todo" options={{ title: 'Todo' }} />
-      <Tabs.Screen name="notes" options={{ title: 'Notatki' }} />
+      <Tabs.Screen name="shopping" options={{ title: "Zakupy" }} />
     </Tabs>
   );
 }

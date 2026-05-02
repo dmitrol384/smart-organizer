@@ -95,7 +95,7 @@ export default function ShoppingScreen() {
           marginBottom: 10,
         }}
       >
-        <Text style={{ fontSize: 24 }}>Lista zakupów</Text>
+        <Text style={{ fontSize: 24 }}>{"Lista zakupów"}</Text>
 
         {/* Ikona sortowania  */}
         <TouchableOpacity onPress={toggleSort}>
