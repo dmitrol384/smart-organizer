@@ -13,12 +13,25 @@ import {
 export default function ShoppingScreen() {
   const [item, setItem] = useState("");
   const [list, setList] = useState<{ name: string; done: boolean }[]>([]);
+  // 3 tryby sortowania: default, A-Z, Z-A
+  const [sortMode, setSortMode] = useState<"default" | "asc" | "desc">(
+    "default",
+  );
 
   const addItem = () => {
     if (!item.trim()) return;
 
     setList([...list, { name: item, done: false }]);
     setItem("");
+  };
+
+  // Klik ikony zmienia tryb sortowania
+  const toggleSort = () => {
+    setSortMode((prev) => {
+      if (prev === "default") return "asc";
+      if (prev === "asc") return "desc";
+      return "default";
+    });
   };
 
   const [isLoaded, setIsLoaded] = useState(false);
@@ -84,8 +97,10 @@ export default function ShoppingScreen() {
       >
         <Text style={{ fontSize: 24 }}>Lista zakupów</Text>
 
-        {/* Ikona sortowania - na razie bez logiki */}
-        <FontAwesome name="sort" size={24} color="black" />
+        {/* Ikona sortowania  */}
+        <TouchableOpacity onPress={toggleSort}>
+          <FontAwesome name="sort" size={24} color="black" />
+        </TouchableOpacity>
       </View>
 
       <TextInput
@@ -102,13 +117,23 @@ export default function ShoppingScreen() {
       <Button title="Dodaj" onPress={addItem} />
 
       <FlatList
-        data={[
-          // Najpierw niekupione (na górze)
-          ...list.filter((item) => !item.done),
+        data={
+          sortMode === "asc"
+            ? [...list].sort((a, b) =>
+                a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
+              )
+            : sortMode === "desc"
+              ? [...list].sort((a, b) =>
+                  b.name.toLowerCase().localeCompare(a.name.toLowerCase()),
+                )
+              : [
+                  // Najpierw niekupione (na górze)
+                  ...list.filter((item) => !item.done),
 
-          // Potem kupione (na dole)
-          ...list.filter((item) => item.done),
-        ]}
+                  // Potem kupione (na dole)
+                  ...list.filter((item) => item.done),
+                ]
+        }
         keyExtractor={(_, index) => index.toString()}
         renderItem={({ item, index }) => (
           <View
