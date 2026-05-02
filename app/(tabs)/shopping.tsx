@@ -13,7 +13,7 @@ import {
 export default function ShoppingScreen() {
   const [item, setItem] = useState("");
   const [list, setList] = useState<{ name: string; done: boolean }[]>([]);
-  // 3 tryby sortowania: default, A-Z, Z-A
+  // 3 tryby sortowania: default, A-Z, Z-Agit
   const [sortMode, setSortMode] = useState<"default" | "asc" | "desc">(
     "default",
   );
@@ -135,31 +135,38 @@ export default function ShoppingScreen() {
                 ]
         }
         keyExtractor={(_, index) => index.toString()}
-        renderItem={({ item, index }) => (
-          <View
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            onPress={() => toggleItem(item)}
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
               alignItems: "center",
-              padding: 10,
+              padding: 15,
+              marginTop: 3,
+              marginBottom: 10,
+              backgroundColor: "#f2f2f2",
+              borderRadius: 10,
+
+              // cień
+              elevation: 2,
             }}
           >
-            <TouchableOpacity onPress={() => toggleItem(item)}>
-              <Text
-                style={{
-                  fontSize: 18,
-                  textDecorationLine: item.done ? "line-through" : "none",
-                  color: item.done ? "gray" : "black",
-                }}
-              >
-                {item.name}
-              </Text>
-            </TouchableOpacity>
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: "500",
+                textDecorationLine: item.done ? "line-through" : "none",
+                color: item.done ? "gray" : "black",
+              }}
+            >
+              {item.name}
+            </Text>
 
             <TouchableOpacity onPress={() => removeItem(item)}>
               <AntDesign name="close-circle" size={24} color="black" />
             </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
         )}
       />
     </View>
