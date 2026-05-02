@@ -20,14 +20,17 @@ export default function ShoppingScreen() {
     setItem("");
   };
 
-  const toggleItem = (index: number) => {
-    const newList = [...list];
-    newList[index].done = !newList[index].done;
+  // Zmieniamy po obiekcie, nie po indeksie
+  const toggleItem = (itemToToggle: { name: string; done: boolean }) => {
+    const newList = list.map((item) =>
+      item === itemToToggle ? { ...item, done: !item.done } : item,
+    );
+
     setList(newList);
   };
 
-  const removeItem = (index: number) => {
-    const newList = list.filter((_, i) => i !== index);
+  const removeItem = (itemToRemove: { name: string; done: boolean }) => {
+    const newList = list.filter((item) => item !== itemToRemove);
     setList(newList);
   };
 
@@ -61,7 +64,13 @@ export default function ShoppingScreen() {
       <Button title="Dodaj" onPress={addItem} />
 
       <FlatList
-        data={list}
+        data={[
+          // Najpierw niekupione (na górze)
+          ...list.filter((item) => !item.done),
+
+          // Potem kupione (na dole)
+          ...list.filter((item) => item.done),
+        ]}
         keyExtractor={(_, index) => index.toString()}
         renderItem={({ item, index }) => (
           <View
@@ -72,7 +81,7 @@ export default function ShoppingScreen() {
               padding: 10,
             }}
           >
-            <TouchableOpacity onPress={() => toggleItem(index)}>
+            <TouchableOpacity onPress={() => toggleItem(item)}>
               <Text
                 style={{
                   fontSize: 18,
@@ -84,7 +93,7 @@ export default function ShoppingScreen() {
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => removeItem(index)}>
+            <TouchableOpacity onPress={() => removeItem(item)}>
               <AntDesign name="close-circle" size={24} color="black" />
             </TouchableOpacity>
           </View>
