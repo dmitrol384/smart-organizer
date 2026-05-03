@@ -12,6 +12,11 @@ import {
 
 export default function ShoppingScreen() {
   const [item, setItem] = useState("");
+  const [editingText, setEditingText] = useState("");
+  const [editingItem, setEditingItem] = useState<{
+    name: string;
+    done: boolean;
+  } | null>(null);
   const [list, setList] = useState<{ name: string; done: boolean }[]>([]);
   // 3 tryby sortowania: default, A-Z, Z-Agit
   const [sortMode, setSortMode] = useState<"default" | "asc" | "desc">(
@@ -85,6 +90,21 @@ export default function ShoppingScreen() {
     setList(newList);
   };
 
+  const startEditing = (item: { name: string; done: boolean }) => {
+    setEditingItem(item);
+    setEditingText(item.name);
+  };
+  const saveEdit = () => {
+    if (!editingText.trim() || !editingItem) return;
+
+    const newList = list.map((item) =>
+      item === editingItem ? { ...item, name: editingText } : item,
+    );
+
+    setList(newList);
+    setEditingItem(null);
+  };
+
   return (
     <View style={{ padding: 20 }}>
       <View
@@ -138,6 +158,7 @@ export default function ShoppingScreen() {
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => toggleItem(item)}
+            onLongPress={() => startEditing(item)}
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
@@ -152,18 +173,35 @@ export default function ShoppingScreen() {
               elevation: 2,
             }}
           >
-            <Text
-              style={{
-                fontSize: 18,
-                fontWeight: "500",
-                textDecorationLine: item.done ? "line-through" : "none",
-                color: item.done ? "gray" : "black",
+            {editingItem === item ? (
+              <TextInput
+                value={editingText}
+                onChangeText={setEditingText}
+                onBlur={saveEdit}
+                autoFocus
+                style={{
+                  fontSize: 18,
+                  flex: 1,
+                }}
+              />
+            ) : (
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: "500",
+                  textDecorationLine: item.done ? "line-through" : "none",
+                  color: item.done ? "gray" : "black",
+                }}
+              >
+                {item.name}
+              </Text>
+            )}
+            <TouchableOpacity
+              onPress={(e) => {
+                e.stopPropagation();
+                removeItem(item);
               }}
             >
-              {item.name}
-            </Text>
-
-            <TouchableOpacity onPress={() => removeItem(item)}>
               <AntDesign name="close-circle" size={24} color="black" />
             </TouchableOpacity>
           </TouchableOpacity>
