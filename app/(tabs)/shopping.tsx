@@ -1,20 +1,20 @@
 import { FontAwesome } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Haptics from "expo-haptics";
-import { useFocusEffect } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import ShoppingItem from "../../components/ShoppingItem";
+import { useShopping } from "../../context/ShoppingContext";
 
 export default function ShoppingScreen() {
   const [editingText, setEditingText] = useState("");
+  const { list, removeProduct, toggleProduct, editProduct } = useShopping();
   // Przechowujemy aktualnie edytowany element.
   // Pozwala to wyświetlić pole edycji tylko dla jednej pozycji listy.
   const [editingItem, setEditingItem] = useState<{
     name: string;
     done: boolean;
   } | null>(null);
-  const [list, setList] = useState<{ name: string; done: boolean }[]>([]);
+
   // Tryb sortowania zmienia sposób wyświetlania danych
   // bez modyfikowania listy zapisanej w pamięci.
   const [sortMode, setSortMode] = useState<"default" | "asc" | "desc">(
@@ -30,72 +30,16 @@ export default function ShoppingScreen() {
     });
   };
 
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  //Zapisujemy listę za każdym razem, gdy coś się zmienia
-  // AsyncStorage działa jak lokalna baza danych na urządzeniu
-  // Zapisujemy dane, żeby użytkownik nie stracił listy po zamknięciu aplikacji
-  useEffect(() => {
-    if (!isLoaded) return;
-    const saveData = async () => {
-      try {
-        await AsyncStorage.setItem("shoppingList", JSON.stringify(list));
-        console.log("ZAPIS:", list);
-      } catch (e) {
-        console.log("Błąd zapisu", e);
-      }
-    };
-
-    saveData();
-  }, [list, isLoaded]);
-
-  // Wczytujemy dane zapisane lokalnie.
-  // Funkcja jest wykorzystywana przy starcie aplikacji
-  // oraz po powrocie z ekranu dodawania produktu.
-  const loadData = async () => {
-    try {
-      const data = await AsyncStorage.getItem("shoppingList");
-
-      console.log("ODCZYT:", data);
-
-      if (data !== null) {
-        setList(JSON.parse(data));
-      }
-
-      setIsLoaded(true);
-    } catch (e) {
-      console.log("Błąd odczytu", e);
-    }
-  };
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  // Odświeżamy dane po każdym powrocie na ekran.
-  // Dzięki temu nowo dodane produkty pojawiają się bez restartu aplikacji.
-  useFocusEffect(
-    useCallback(() => {
-      loadData();
-    }, []),
-  );
-
-  // Zmieniamy po obiekcie, nie po indeksie
   const toggleItem = (itemToToggle: { name: string; done: boolean }) => {
-    // Krótka wibracja po zmianie statusu produktu.
     Haptics.selectionAsync();
-    const newList = list.map((item) =>
-      item === itemToToggle ? { ...item, done: !item.done } : item,
-    );
 
-    setList(newList);
+    toggleProduct(itemToToggle);
   };
 
   const removeItem = async (itemToRemove: { name: string; done: boolean }) => {
     // Wibracja informuje użytkownika o usunięciu elementu.
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    const newList = list.filter((item) => item !== itemToRemove);
-    setList(newList);
+    removeProduct(itemToRemove);
   };
   // Rozpoczynamy edycję wybranego produktu.
   // Zapamiętujemy element oraz jego aktualną nazwę.
@@ -108,11 +52,9 @@ export default function ShoppingScreen() {
   const saveEdit = () => {
     if (!editingText.trim() || !editingItem) return;
 
-    const newList = list.map((item) =>
-      item === editingItem ? { ...item, name: editingText } : item,
-    );
+    editProduct(editingItem, editingText);
 
-    setList(newList);
+    setEditingItem(null);
     setEditingItem(null);
   };
 

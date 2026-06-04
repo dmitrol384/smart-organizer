@@ -1,33 +1,24 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Haptics from "expo-haptics";
-import { router } from "expo-router";
 import { useState } from "react";
 import { Button, TextInput, View } from "react-native";
+import { useShopping } from "../../context/ShoppingContext";
 
 export default function AddProductScreen() {
   const [name, setName] = useState("");
+  const { addProduct } = useShopping();
   // Zapisujemy nowy produkt w pamięci urządzenia.
   // Dzięki temu ekran listy może odczytać go po powrocie.
+  // Dodajemy produkt do globalnego stanu aplikacji.
+  // Context automatycznie zapisze dane do AsyncStorage.
   const saveProduct = async () => {
     if (!name.trim()) return;
 
-    try {
-      const data = await AsyncStorage.getItem("shoppingList");
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
-      const currentList = data ? JSON.parse(data) : [];
+    addProduct(name);
 
-      const updatedList = [{ name, done: false }, ...currentList];
-
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      await AsyncStorage.setItem("shoppingList", JSON.stringify(updatedList));
-      setName("");
-
-      router.back();
-    } catch (e) {
-      console.log("Błąd zapisu", e);
-    }
+    setName("");
   };
-
   return (
     <View
       style={{
