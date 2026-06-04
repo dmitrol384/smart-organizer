@@ -8,6 +8,7 @@ import {
 } from "react";
 
 type ShoppingItem = {
+  id: string;
   name: string;
   done: boolean;
 };
@@ -56,17 +57,24 @@ export function ShoppingProvider({ children }: { children: ReactNode }) {
   }, [list]);
 
   const addProduct = (name: string) => {
-    setList((prev) => [{ name, done: false }, ...prev]);
+    setList((prev) => [
+      {
+        id: Date.now().toString(),
+        name,
+        done: false,
+      },
+      ...prev,
+    ]);
   };
 
   const removeProduct = (itemToRemove: ShoppingItem) => {
-    setList((prev) => prev.filter((item) => item !== itemToRemove));
+    setList((prev) => prev.filter((item) => item.id !== itemToRemove.id));
   };
 
   const toggleProduct = (itemToToggle: ShoppingItem) => {
     setList((prev) =>
       prev.map((item) =>
-        item === itemToToggle ? { ...item, done: !item.done } : item,
+        item.id === itemToToggle.id ? { ...item, done: !item.done } : item,
       ),
     );
   };
@@ -74,7 +82,7 @@ export function ShoppingProvider({ children }: { children: ReactNode }) {
   const editProduct = (itemToEdit: ShoppingItem, newName: string) => {
     setList((prev) =>
       prev.map((item) =>
-        item === itemToEdit ? { ...item, name: newName } : item,
+        item.id === itemToEdit.id ? { ...item, name: newName } : item,
       ),
     );
   };

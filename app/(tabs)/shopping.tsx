@@ -11,6 +11,7 @@ export default function ShoppingScreen() {
   // Przechowujemy aktualnie edytowany element.
   // Pozwala to wyświetlić pole edycji tylko dla jednej pozycji listy.
   const [editingItem, setEditingItem] = useState<{
+    id: string;
     name: string;
     done: boolean;
   } | null>(null);
@@ -30,20 +31,28 @@ export default function ShoppingScreen() {
     });
   };
 
-  const toggleItem = (itemToToggle: { name: string; done: boolean }) => {
+  const toggleItem = (itemToToggle: {
+    id: string;
+    name: string;
+    done: boolean;
+  }) => {
     Haptics.selectionAsync();
 
     toggleProduct(itemToToggle);
   };
 
-  const removeItem = async (itemToRemove: { name: string; done: boolean }) => {
+  const removeItem = async (itemToRemove: {
+    id: string;
+    name: string;
+    done: boolean;
+  }) => {
     // Wibracja informuje użytkownika o usunięciu elementu.
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     removeProduct(itemToRemove);
   };
   // Rozpoczynamy edycję wybranego produktu.
   // Zapamiętujemy element oraz jego aktualną nazwę.
-  const startEditing = (item: { name: string; done: boolean }) => {
+  const startEditing = (item: { id: string; name: string; done: boolean }) => {
     setEditingItem(item);
     setEditingText(item.name);
   };
@@ -54,7 +63,6 @@ export default function ShoppingScreen() {
 
     editProduct(editingItem, editingText);
 
-    setEditingItem(null);
     setEditingItem(null);
   };
 
@@ -94,11 +102,11 @@ export default function ShoppingScreen() {
                   ...list.filter((item) => item.done),
                 ]
         }
-        keyExtractor={(_, index) => index.toString()}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <ShoppingItem
             item={item}
-            isEditing={editingItem === item}
+            isEditing={editingItem?.id === item.id}
             editingText={editingText}
             onChangeEditingText={setEditingText}
             onToggle={() => toggleItem(item)}
