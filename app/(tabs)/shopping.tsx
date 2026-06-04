@@ -1,22 +1,27 @@
 import { FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
+
 import { Button, FlatList, Text, TouchableOpacity, View } from "react-native";
 import ShoppingItem from "../../components/ShoppingItem";
 
 export default function ShoppingScreen() {
   const [editingText, setEditingText] = useState("");
+  // Przechowujemy aktualnie edytowany element.
+  // Pozwala to wyświetlić pole edycji tylko dla jednej pozycji listy.
   const [editingItem, setEditingItem] = useState<{
     name: string;
     done: boolean;
   } | null>(null);
   const [list, setList] = useState<{ name: string; done: boolean }[]>([]);
-  // 3 tryby sortowania: default, A-Z, Z-A
+  // Tryb sortowania zmienia sposób wyświetlania danych
+  // bez modyfikowania listy zapisanej w pamięci.
   const [sortMode, setSortMode] = useState<"default" | "asc" | "desc">(
     "default",
   );
-  // Klik ikony zmienia tryb sortowania
+  // Przełączamy sposób prezentacji danych.
+  // Sortowanie nie zmienia zapisanej listy, a jedynie kolejność wyświetlania.
   const toggleSort = () => {
     setSortMode((prev) => {
       if (prev === "default") return "asc";
@@ -44,23 +49,36 @@ export default function ShoppingScreen() {
     saveData();
   }, [list, isLoaded]);
 
-  // Wczytujemy dane przy starcie aplikacji
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const data = await AsyncStorage.getItem("shoppingList");
-        console.log("ODCZYT:", data);
-        if (data !== null) {
-          setList(JSON.parse(data));
-        }
-        setIsLoaded(true);
-      } catch (e) {
-        console.log("Błąd odczytu", e);
-      }
-    };
+  // Wczytujemy dane zapisane lokalnie.
+  // Funkcja jest wykorzystywana przy starcie aplikacji
+  // oraz po powrocie z ekranu dodawania produktu.
+  const loadData = async () => {
+    try {
+      const data = await AsyncStorage.getItem("shoppingList");
 
+      console.log("ODCZYT:", data);
+
+      if (data !== null) {
+        setList(JSON.parse(data));
+      }
+
+      setIsLoaded(true);
+    } catch (e) {
+      console.log("Błąd odczytu", e);
+    }
+  };
+
+  useEffect(() => {
     loadData();
   }, []);
+
+  // Odświeżamy dane po każdym powrocie na ekran.
+  // Dzięki temu nowo dodane produkty pojawiają się bez restartu aplikacji.
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, []),
+  );
 
   // Zmieniamy po obiekcie, nie po indeksie
   const toggleItem = (itemToToggle: { name: string; done: boolean }) => {
@@ -75,11 +93,14 @@ export default function ShoppingScreen() {
     const newList = list.filter((item) => item !== itemToRemove);
     setList(newList);
   };
-
+  // Rozpoczynamy edycję wybranego produktu.
+  // Zapamiętujemy element oraz jego aktualną nazwę.
   const startEditing = (item: { name: string; done: boolean }) => {
     setEditingItem(item);
     setEditingText(item.name);
   };
+  // Zapisujemy zmodyfikowaną nazwę produktu
+  // i kończymy tryb edycji.
   const saveEdit = () => {
     if (!editingText.trim() || !editingItem) return;
 
