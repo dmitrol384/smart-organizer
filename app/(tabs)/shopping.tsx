@@ -1,9 +1,9 @@
 import { FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { router, useFocusEffect } from "expo-router";
+import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 
-import { Button, FlatList, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import ShoppingItem from "../../components/ShoppingItem";
 
 export default function ShoppingScreen() {
@@ -129,11 +129,6 @@ export default function ShoppingScreen() {
           <FontAwesome name="sort" size={24} color="black" />
         </TouchableOpacity>
       </View>
-
-      <Button
-        title="Nowy produkt"
-        onPress={() => router.push("/add-product" as const)}
-      />
 
       <FlatList
         data={
