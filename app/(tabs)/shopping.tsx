@@ -1,18 +1,11 @@
 import { FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import {
-  Button,
-  FlatList,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Button, FlatList, Text, TouchableOpacity, View } from "react-native";
 import ShoppingItem from "../../components/ShoppingItem";
 
 export default function ShoppingScreen() {
-  const [item, setItem] = useState("");
   const [editingText, setEditingText] = useState("");
   const [editingItem, setEditingItem] = useState<{
     name: string;
@@ -23,14 +16,6 @@ export default function ShoppingScreen() {
   const [sortMode, setSortMode] = useState<"default" | "asc" | "desc">(
     "default",
   );
-
-  const addItem = () => {
-    if (!item.trim()) return;
-
-    setList([{ name: item, done: false }, ...list]);
-    setItem("");
-  };
-
   // Klik ikony zmienia tryb sortowania
   const toggleSort = () => {
     setSortMode((prev) => {
@@ -124,18 +109,10 @@ export default function ShoppingScreen() {
         </TouchableOpacity>
       </View>
 
-      <TextInput
-        placeholder="Dodaj produkt"
-        value={item}
-        onChangeText={setItem}
-        style={{
-          borderWidth: 1,
-          padding: 10,
-          marginBottom: 10,
-        }}
+      <Button
+        title="Nowy produkt"
+        onPress={() => router.push("/add-product" as const)}
       />
-
-      <Button title="Dodaj" onPress={addItem} />
 
       <FlatList
         data={
