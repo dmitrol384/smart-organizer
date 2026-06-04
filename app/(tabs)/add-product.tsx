@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Button, Text, TextInput, View } from "react-native";
+import { Button, TextInput, View } from "react-native";
 
 export default function AddProductScreen() {
   const [name, setName] = useState("");
@@ -26,9 +26,15 @@ export default function AddProductScreen() {
   };
 
   return (
-    <View style={{ padding: 20 }}>
-      <Text style={{ fontSize: 24 }}>Dodawanie produktu</Text>
-
+    <View
+      style={{
+        borderWidth: 1,
+        borderColor: "#7c7272",
+        borderRadius: 8,
+        padding: 10,
+        marginBottom: 10,
+      }}
+    >
       <TextInput
         placeholder="Nazwa produktu"
         value={name}

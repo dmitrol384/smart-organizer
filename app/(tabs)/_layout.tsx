@@ -1,3 +1,4 @@
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
 
 export default function TabsLayout() {
@@ -9,6 +10,7 @@ export default function TabsLayout() {
         name="shopping"
         options={{
           title: "Lista",
+          tabBarIcon: () => <FontAwesome name="list" size={24} color="black" />,
         }}
       />
 
@@ -16,6 +18,7 @@ export default function TabsLayout() {
         name="add-product"
         options={{
           title: "Dodaj Produkt",
+          tabBarIcon: () => <FontAwesome name="plus" size={24} color="black" />,
         }}
       />
 
@@ -23,6 +26,9 @@ export default function TabsLayout() {
         name="about"
         options={{
           title: "O aplikacji",
+          tabBarIcon: () => (
+            <FontAwesome name="info-circle" size={24} color="black" />
+          ),
         }}
       />
     </Tabs>
