@@ -61,9 +61,10 @@ export default function ShoppingScreen() {
   const saveEdit = () => {
     if (!editingText.trim() || !editingItem) return;
 
-    editProduct(editingItem, editingText);
+    editProduct(editingItem, editingText.trim());
 
     setEditingItem(null);
+    setEditingText("");
   };
 
   return (

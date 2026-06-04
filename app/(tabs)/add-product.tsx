@@ -1,3 +1,4 @@
+import { router } from "@/.expo/types/router";
 import * as Haptics from "expo-haptics";
 import { useState } from "react";
 import { Button, TextInput, View } from "react-native";
@@ -18,6 +19,7 @@ export default function AddProductScreen() {
     addProduct(name);
 
     setName("");
+    router.back();
   };
   return (
     <View

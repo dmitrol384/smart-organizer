@@ -25,6 +25,7 @@ const ShoppingContext = createContext<ShoppingContextType | null>(null);
 
 export function ShoppingProvider({ children }: { children: ReactNode }) {
   const [list, setList] = useState<ShoppingItem[]>([]);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Wczytujemy dane przy uruchomieniu aplikacji.
   useEffect(() => {
@@ -37,14 +38,19 @@ export function ShoppingProvider({ children }: { children: ReactNode }) {
         }
       } catch (e) {
         console.log("Błąd odczytu", e);
+      } finally {
+        setIsInitialized(true);
       }
     };
 
     loadData();
   }, []);
 
-  // Zapisujemy dane po każdej zmianie listy.
+  // Zapisujemy dane po każdej zmianie listy,
+  // ale pomijamy pierwszy render.
   useEffect(() => {
+    if (!isInitialized) return;
+
     const saveData = async () => {
       try {
         await AsyncStorage.setItem("shoppingList", JSON.stringify(list));
@@ -54,7 +60,7 @@ export function ShoppingProvider({ children }: { children: ReactNode }) {
     };
 
     saveData();
-  }, [list]);
+  }, [list, isInitialized]);
 
   const addProduct = (name: string) => {
     setList((prev) => [
