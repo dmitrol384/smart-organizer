@@ -3,6 +3,7 @@ import { Text, TextInput, TouchableOpacity } from "react-native";
 
 type ShoppingItemProps = {
   item: {
+    id: string;
     name: string;
     done: boolean;
   };
