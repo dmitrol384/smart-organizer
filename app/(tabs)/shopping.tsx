@@ -1,8 +1,8 @@
 import { FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Haptics from "expo-haptics";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import ShoppingItem from "../../components/ShoppingItem";
 
@@ -82,6 +82,8 @@ export default function ShoppingScreen() {
 
   // Zmieniamy po obiekcie, nie po indeksie
   const toggleItem = (itemToToggle: { name: string; done: boolean }) => {
+    // Krótka wibracja po zmianie statusu produktu.
+    Haptics.selectionAsync();
     const newList = list.map((item) =>
       item === itemToToggle ? { ...item, done: !item.done } : item,
     );
@@ -89,7 +91,9 @@ export default function ShoppingScreen() {
     setList(newList);
   };
 
-  const removeItem = (itemToRemove: { name: string; done: boolean }) => {
+  const removeItem = async (itemToRemove: { name: string; done: boolean }) => {
+    // Wibracja informuje użytkownika o usunięciu elementu.
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     const newList = list.filter((item) => item !== itemToRemove);
     setList(newList);
   };

@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Button, TextInput, View } from "react-native";
@@ -17,7 +18,9 @@ export default function AddProductScreen() {
 
       const updatedList = [{ name, done: false }, ...currentList];
 
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       await AsyncStorage.setItem("shoppingList", JSON.stringify(updatedList));
+      setName("");
 
       router.back();
     } catch (e) {
