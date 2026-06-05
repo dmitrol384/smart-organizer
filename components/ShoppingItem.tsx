@@ -1,6 +1,6 @@
 import { AntDesign } from "@expo/vector-icons";
 import { Text, TextInput, TouchableOpacity } from "react-native";
-
+// Typ danych przekazywanych do komponentu pojedynczego elementu listy zakupów.
 type ShoppingItemProps = {
   item: {
     id: string;
@@ -27,6 +27,8 @@ export default function ShoppingItem({
   onSaveEdit,
 }: ShoppingItemProps) {
   return (
+    // Kliknięcie zmienia status produktu (kupiony/niekupiony),
+    // a dłuższe przytrzymanie uruchamia tryb edycji.
     <TouchableOpacity
       onPress={onToggle}
       onLongPress={onStartEdit}
@@ -42,6 +44,7 @@ export default function ShoppingItem({
         elevation: 2,
       }}
     >
+      {/* W trybie edycji wyświetlamy pole tekstowe do zmiany nazwy produktu. */}
       {isEditing ? (
         <TextInput
           value={editingText}
@@ -54,6 +57,7 @@ export default function ShoppingItem({
           }}
         />
       ) : (
+        /* W normalnym trybie wyświetlamy nazwę produktu. */
         <Text
           style={{
             fontSize: 18,
@@ -66,7 +70,7 @@ export default function ShoppingItem({
           {item.name}
         </Text>
       )}
-
+      {/* Przycisk usuwania produktu z listy zakupów. */}
       <TouchableOpacity onPress={onDelete}>
         <AntDesign name="close-circle" size={24} color="black" />
       </TouchableOpacity>

@@ -1,5 +1,5 @@
-import { router } from "@/.expo/types/router";
 import * as Haptics from "expo-haptics";
+import { router } from "expo-router";
 import { useState } from "react";
 import { Button, TextInput, View } from "react-native";
 import { useShopping } from "../../context/ShoppingContext";

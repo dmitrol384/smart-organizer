@@ -6,7 +6,6 @@ import { ShoppingProvider, useShopping } from "../context/ShoppingContext";
 jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
 );
-
 function TestComponent() {
   const { list, addProduct, removeProduct, toggleProduct, editProduct } =
     useShopping();

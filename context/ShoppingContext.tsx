@@ -7,12 +7,13 @@ import {
   useState,
 } from "react";
 
+// Model pojedynczego produktu przechowywanego na liście zakupów.
 type ShoppingItem = {
   id: string;
   name: string;
   done: boolean;
 };
-
+// Definicja danych i funkcji udostępnianych przez Context API.
 type ShoppingContextType = {
   list: ShoppingItem[];
   addProduct: (name: string) => void;
